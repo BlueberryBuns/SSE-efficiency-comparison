@@ -9,6 +9,7 @@ https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 https://pl.wikibooks.org/wiki/C/Czytanie_i_pisanie_do_plik%C3%B3w
 
 */
+
 #define TAB_SIZE 8192
 #define REPETITION 10
 #define TIMES_ARRAY_SIZE 4
@@ -57,6 +58,9 @@ float divisionSISDResult(float *a, float *b, int numbers);
 
 
 int main(){
+    FILE *f;
+    f = fopen("result.txt", "w");
+
     double times[TIMES_ARRAY_SIZE];
     int numberAmount[] = {2048, 4096, 8192};
     
@@ -75,24 +79,79 @@ for(int j = 0; j < 3;++j){
     generaetNumber(setB);
         for(int k = 0; k<numberOfNumbers[j]; ++k){
             additionSIMD(&setA[k], &setB[k], 0);
-            times[0] += (double)additionSIMD(&setA[k], &setB[k], 0);
-            times[1] += (double)subtractionSIMD(&setA[k], &setB[k], 0);
-            times[2] += (double)multiplicationSIMD(&setA[k], &setB[k], 0);
-            times[3] += (double)divisionSIMD(&setA[k], &setB[k], 0);
+            times[0] += (double)additionSIMD(&setA[k], &setB[k], 1);
+            times[1] += (double)subtractionSIMD(&setA[k], &setB[k], 1);
+            times[2] += (double)multiplicationSIMD(&setA[k], &setB[k], 1);
+            times[3] += (double)divisionSIMD(&setA[k], &setB[k], 1);
         }
     
     }
-    printf("------ %d -------\n", numberOfNumbers[j]);
-    printf("Czas trwania dodawania %lf\n",times[0]);
-    printf("Czas trwania odejmowania %lf\n",times[1]);
-    printf("Czas trwania mnożenia %lf\n",times[2]);
-    printf("Czas trwania dzielenia %lf\n",times[3]);
+
+    fprintf(f,"Typ obliczen: SIMD\nLiczba liczb: %d, Sredni czas[s]:\n", numberOfNumbers[j]);
+    fprintf(f,"+ %lf\n",times[0]/10);
+    fprintf(f,"- %lf\n",times[1]/10);
+    fprintf(f,"* %lf\n",times[2]/10);
+    fprintf(f,"/ %lf\n\n",times[3]/10);
+    // printf("------ %d -------\n", numberOfNumbers[j]);
+    // printf("Czas trwania dodawania %lf\n",times[0]);
+    // printf("Czas trwania odejmowania %lf\n",times[1]);
+    // printf("Czas trwania mnożenia %lf\n",times[2]);
+    // printf("Czas trwania dzielenia %lf\n",times[3]);
     for(int k = 0; k<4; ++k){
         times[k] = 0;
     }
 }
+fprintf(f,"\n");
+    //testing loop - SISD
+for(int j = 0; j < 3;++j){
+    for(int i = 0; i < REPETITION; ++i){
+    generaetNumber(setA);
+    generaetNumber(setB);
+        for(int k = 0; k<numberOfNumbers[j]; ++k){
+            additionSISD(&setA[k].vecOne, &setB[k].vecOne, 0);
+            times[0] += (double)additionSISD(&setA[k].vecOne, &setB[k].vecOne, 0);
+            times[1] += (double)subtractionSISD(&setA[k].vecOne, &setB[k].vecOne, 0);
+            times[2] += (double)multiplicationSISD(&setA[k].vecOne, &setB[k].vecOne, 0);
+            times[3] += (double)divisionSISD(&setA[k].vecOne, &setB[k].vecOne, 0);
+        }
+        for(int k = 0; k<numberOfNumbers[j]; ++k){
+            additionSISD(&setA[k].vecTwo, &setB[k].vecTwo, 0);
+            times[0] += (double)additionSISD(&setA[k].vecTwo, &setB[k].vecTwo, 0);
+            times[1] += (double)subtractionSISD(&setA[k].vecTwo, &setB[k].vecTwo, 0);
+            times[2] += (double)multiplicationSISD(&setA[k].vecTwo, &setB[k].vecTwo, 0);
+            times[3] += (double)divisionSISD(&setA[k].vecTwo, &setB[k].vecTwo, 0);
+        }
+        for(int k = 0; k<numberOfNumbers[j]; ++k){
+            additionSISD(&setA[k].vecThree, &setB[k].vecThree, 0);
+            times[0] += (double)additionSISD(&setA[k].vecThree, &setB[k].vecThree, 0);
+            times[1] += (double)subtractionSISD(&setA[k].vecThree, &setB[k].vecThree, 0);
+            times[2] += (double)multiplicationSISD(&setA[k].vecThree, &setB[k].vecThree, 0);
+            times[3] += (double)divisionSISD(&setA[k].vecThree, &setB[k].vecThree, 0);
+        }
+        for(int k = 0; k<numberOfNumbers[j]; ++k){
+            additionSISD(&setA[k].vecFour, &setB[k].vecFour, 0);
+            times[0] += (double)additionSISD(&setA[k].vecFour, &setB[k].vecFour, 0);
+            times[1] += (double)subtractionSISD(&setA[k].vecFour, &setB[k].vecFour, 0);
+            times[2] += (double)multiplicationSISD(&setA[k].vecFour, &setB[k].vecFour, 0);
+            times[3] += (double)divisionSISD(&setA[k].vecFour, &setB[k].vecFour, 0);
+        }
+    }
 
-    
+    fprintf(f,"Typ obliczen: SISD\nLiczba liczb: %d, Sredni czas[s]:\n", numberOfNumbers[j]);
+    fprintf(f,"+ %lf\n",times[0]/10);
+    fprintf(f,"- %lf\n",times[1]/10);
+    fprintf(f,"* %lf\n",times[2]/10);
+    fprintf(f,"/ %lf\n\n\n",times[3]/10);
+    // printf("------ %d -------\n", numberOfNumbers[j]);
+    // printf("Czas trwania dodawania %lf\n",times[0]);
+    // printf("Czas trwania odejmowania %lf\n",times[1]);
+    // printf("Czas trwania mnożenia %lf\n",times[2]);
+    // printf("Czas trwania dzielenia %lf\n",times[3]);
+    for(int k = 0; k<4; ++k){
+        times[k] = 0;
+    }
+}
+    fclose(f);
     //printVector(setA);
     //printVector(setB);
     //double x = additionSIMD(setA, setB, 4096);
@@ -141,7 +200,7 @@ double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     );
 
     timeOfEnd_t= clock();
-    timePassed = (double)(timeOfEnd_t- timeOfStart_t);
+    timePassed = (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
 
     return timePassed;
 }
@@ -163,7 +222,7 @@ double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     );
 
     timeOfEnd_t= clock();
-    timePassed = (double)(timeOfEnd_t - timeOfStart_t);
+    timePassed = (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
     
     return timePassed;
 }
@@ -185,7 +244,7 @@ double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers)
     );
 
     timeOfEnd_t = clock();
-    timePassed = (double)(timeOfEnd_t - timeOfStart_t);
+    timePassed = (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
     
     return timePassed;
 }
@@ -207,7 +266,7 @@ double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
     );
 
     timeOfEnd_t = clock();
-    timePassed= ((double)(timeOfEnd_t - timeOfStart_t));
+    timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
     
     return timePassed;
 }
@@ -228,16 +287,64 @@ numericVector divisionSIMDResult(numericVector* setA ,numericVector* setB, int n
 
 //SISD operations - returning time passed
 double additionSISD(float *a, float *b, int numbers){
+float result;
+timeOfStart_t = clock();
 
+asm(
+    "fld %1\n"
+    "fadd %2 \n"
+    :"=t"(result)
+    :"m"(a), "m"(b)
+
+);
+timeOfEnd_t = clock();
+timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
+return timePassed;
 }
 double subtractionSISD(float *a, float *b, int numbers){
+float result;
+timeOfStart_t = clock();
 
+asm(
+    "fld %1\n"
+    "fsub %2 \n"
+    :"=t"(result)
+    :"m"(a), "m"(b)
+
+);
+timeOfEnd_t = clock();
+timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
+return timePassed;
 }
 double multiplicationSISD(float *a, float *b, int numbers){
+float result;
+timeOfStart_t = clock();
 
+asm(
+    "fld %1\n"
+    "fmul %2 \n"
+    :"=t"(result)
+    :"m"(a), "m"(b)
+
+);
+timeOfEnd_t = clock();
+timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
+return timePassed;
 }
 double divisionSISD(float *a, float *b, int numbers){
+float result;
+timeOfStart_t = clock();
 
+asm(
+    "fld %1\n"
+    "fdiv %2 \n"
+    :"=t"(result)
+    :"m"(a), "m"(b)
+
+);
+timeOfEnd_t = clock();
+timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
+return timePassed;
 }
 
 //SISD operations - returning results
