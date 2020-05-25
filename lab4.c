@@ -7,7 +7,9 @@ https://software.intel.com/content/www/us/en/develop/articles/introduction-to-in
 https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 
 */
-#define TAB_SIZE 8192; 
+#define TAB_SIZE 8192
+#define REPETITION 100
+
 double time_passed;
 
 
@@ -34,22 +36,28 @@ int main(){
     generaetNumber(setB);
     printVector(setA);
     printVector(setB);
-    println("OiAK - Laboratorium 4");
-    println("Prowadzacy: mgr. Tomasz Serafin");
+    printf("OiAK - Laboratorium 4\n");
+    printf("Prowadzacy: mgr. Tomasz Serafin\n");
 
 
     return 0;
 }
 
 void generaetNumber(numericVector *dataSet){
-    dataSet->vecOne = (double)(rand()%10E3);
-    dataSet->vecTwo = (double)(rand()%10E3);
-    dataSet->vecThree = (double)(rand()%10E3);
-    dataSet->vecFour = (double)(rand()%10E3);
+    for(int i = 0; i<TAB_SIZE; ++i){
+    dataSet[i].vecOne = ((float)(rand()%100000))/((float)(rand()%100000));
+    dataSet[i].vecTwo = ((float)(rand()%100000))/((float)(rand()%100000));
+    dataSet[i].vecThree = ((float)(rand()%100000))/((float)(rand()%100000));
+    dataSet[i].vecFour = ((float)(rand()%100000))/((float)(rand()%100000));
+    }
 }
 
  void printVector(numericVector *dataSet){
     for(int i = 0; i<TAB_SIZE; ++i){
-        println(dataSet[i]);
+        printf("%lf, %lf, %lf, %lf, numer iteracji %d\n",
+        dataSet[i].vecOne, 
+        dataSet[i].vecTwo, 
+        dataSet[i].vecThree, 
+        dataSet[i].vecFour, i);
     }
 }
