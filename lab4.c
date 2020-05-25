@@ -9,7 +9,7 @@ https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 
 */
 #define TAB_SIZE 8192
-#define REPETITION 100
+#define REPETITION 10
 
 clock_t timeOfStart, timeOfEnd;
 double timePassed;
@@ -54,20 +54,28 @@ float divisionSISDResult(float *a, float *b, int numbers);
 
 
 int main(){
-    double summaryAdditionTime;
-    double summarySubTime;
-    double summaryMultTime;
-    double summartDivTime;
+    double summaryAdditionTime =0;
+    double summarySubTime = 0;
+    double summaryMultTime = 0;
+    double summartDivTime = 0;
 
     srand(time(NULL));
+    //generating vectors
     numericVector setA[TAB_SIZE];
     numericVector setB[TAB_SIZE];
     generaetNumber(setA);
     generaetNumber(setB);
-    printVector(setA);
-    printVector(setB);
-    double x = additionSIMD(setA, setB, 4096);
-    printf("Czas trwania %lf\n",x);
+
+    //testing loop
+    for(int j = 0; j<REPETITION; ++j){
+        generaetNumber(setA);
+        generaetNumber(setB);
+        summaryAdditionTime +=additionSIMD(setA, setB, 4096);
+    }
+    //printVector(setA);
+    //printVector(setB);
+    //double x = additionSIMD(setA, setB, 4096);
+    printf("Czas trwania %lf\n",summaryAdditionTime);
     printf("OiAK - Laboratorium 4\n");
     printf("Prowadzacy: mgr. Tomasz Serafin\n");
 
