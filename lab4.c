@@ -10,9 +10,10 @@ https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 */
 #define TAB_SIZE 8192
 #define REPETITION 10
+#define TIMES_ARRAY_SIZE 4
 
-clock_t timeOfStart, timeOfEnd;
-double timePassed;
+clock_t timeOfStart_t, timeOfEnd_t;
+double timePassed_t;
 
 // Initialising the struct of 128-bit vector
 typedef struct{
@@ -53,11 +54,11 @@ float multiplicationSISDResult(float *a, float *b, int numbers);
 float divisionSISDResult(float *a, float *b, int numbers);
 
 
+//SIMD test
+void testingSIMD(numericVector *setA, numericVector *setB,double times[], int numberOfNumbers);
+
 int main(){
-    double summaryAdditionTime =0;
-    double summarySubTime = 0;
-    double summaryMultTime = 0;
-    double summartDivTime = 0;
+    double times[TIMES_ARRAY_SIZE];
 
     srand(time(NULL));
     //generating vectors
@@ -65,27 +66,16 @@ int main(){
     numericVector setB[TAB_SIZE];
     generaetNumber(setA);
     generaetNumber(setB);
-
+    int numberOfNumbers = 0;
     //testing loop
-    for(int j = 0; j<REPETITION; ++j){
-        summaryAdditionTime=0;
-        summarySubTime = 0;
-        summartDivTime = 0;
-        summaryMultTime = 0;
-        generaetNumber(setA);
-        generaetNumber(setB);
-        summaryAdditionTime +=additionSIMD(setA, setB, 4096);
-        summarySubTime +=subtractionSIMD(setA, setB, 4096);
-        summaryMultTime +=multiplicationSIMD(setA, setB, 4096);
-        summartDivTime +=divisionSIMD(setA, setB, 4096);
-    }
+    testingSIMD(setA, setB, times, numberOfNumbers);
     //printVector(setA);
     //printVector(setB);
     //double x = additionSIMD(setA, setB, 4096);
-    printf("Czas trwania dodawania %lf\n",summaryAdditionTime);
-    printf("Czas trwania odejmowania %lf\n",summarySubTime);
-    printf("Czas trwania mnożenia %lf\n",summaryMultTime);
-    printf("Czas trwania dzielenia %lf\n",summartDivTime);
+    printf("Czas trwania dodawania %lf\n",times[0]);
+    printf("Czas trwania odejmowania %lf\n",times[1]);
+    printf("Czas trwania mnożenia %lf\n",times[2]);
+    printf("Czas trwania dzielenia %lf\n",times[3]);
     printf("OiAK - Laboratorium 4\n");
     printf("Prowadzacy: mgr. Tomasz Serafin\n");
 
@@ -93,12 +83,31 @@ int main(){
     return 0;
 }
 
+void testingSIMD(numericVector *setA, numericVector *setB,double times[], int numberOfNumbers){
+for(int i = 0; i<REPETITION; ++i){
+    double tmp = 0
+    generaetNumber(setA);
+    generaetNumber(setB);
+
+    for(int j = 0; j<numberOfNumbers;++j){
+        tmp = times[0] + (double)additionSIMD(&setA[j], &setB[j], numberOfNumbers);
+        &times[0] << tmp;
+        tmp = times[1] + (double)subtractionSIMD(&setA[j], &setB[j], numberOfNumbers);
+        &times[1] << tmp;
+        tmp = times[2] + (double)multiplicationSIMD(&setA[j], &setB[j], numberOfNumbers);
+        &times[2] << tmp;
+        tmp = times[3] + (double)divisionSIMD(&setA[j], &setB[j], numberOfNumbers);
+        &times[3] << tmp;
+    }
+}
+
+}
 void generaetNumber(numericVector *dataSet){
     for(int i = 0; i<TAB_SIZE; ++i){
-    dataSet[i].vecOne = ((float)(rand()%100000))/((float)(rand()%100000));
-    dataSet[i].vecTwo = ((float)(rand()%100000))/((float)(rand()%100000));
-    dataSet[i].vecThree = ((float)(rand()%100000))/((float)(rand()%100000));
-    dataSet[i].vecFour = ((float)(rand()%100000))/((float)(rand()%100000));
+    dataSet[i].vecOne = ((float)(rand()%100000));
+    dataSet[i].vecTwo = ((float)(rand()%100000));
+    dataSet[i].vecThree = ((float)(rand()%100000));
+    dataSet[i].vecFour = ((float)(rand()%100000));
     }
 }
 
@@ -114,10 +123,9 @@ void generaetNumber(numericVector *dataSet){
 //SIMD operations - returning time passed
 double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     numericVector result;
-    timePassed = 0;
+    timePassed_t = 0;
 
-    for(int i=0; i<numbers; ++i){
-    timeOfStart = clock();
+    timeOfStart_t = clock();
 
     asm(
         "movq %1, %%rax\n"
@@ -131,17 +139,16 @@ double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
         :"rax"
     );
 
-    timeOfEnd = clock();
-    timePassed += (double)(timeOfEnd - timeOfStart);
-    }
-    return timePassed;
+    timeOfEnd_t= clock();
+    timePassed_t += (double)(timeOfEnd_t- timeOfStart_t);
+
+    return timePassed_t;
 }
 double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     numericVector result;
-    timePassed = 0;
+    timePassed_t = 0;
 
-    for(int i=0; i<numbers; ++i){
-    timeOfStart = clock();
+    timeOfStart_t = clock();
 
     asm(
         "movq %1, %%rax\n"
@@ -155,41 +162,39 @@ double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
         :"rax"
     );
 
-    timeOfEnd = clock();
-    timePassed += (double)(timeOfEnd - timeOfStart);
-    }
-    return timePassed;
+    timeOfEnd_t= clock();
+    timePassed_t += (double)(timeOfEnd_t - timeOfStart_t);
+    
+    return timePassed_t;
 }
 double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers){
     numericVector result;
-    timePassed = 0;
+    timePassed_t = 0;
 
-    for(int i=0; i<numbers; ++i){
-    timeOfStart = clock();
+    timeOfStart_t = clock();
 
     asm(
-        "movq %1, %%rax\n"
-        "movups (%%rax), %%xmm0\n"
-        "movq %2, %%rax\n"
-        "movups (%%rax), %%xmm1\n"
-        "mulps %%xmm1, %%xmm0\n"
-        "movups %%xmm0, %0\n"
-        :"=g"(result)
-        :"g"(setA), "g"(setB)
-        :"rax"
+        "movq %1, %%rax \n"
+		"movups (%%rax), %%xmm0 \n"
+		"movq %2, %%rax \n\t"
+		"movups (%%rax), %%xmm1 \n"
+		"mulps %%xmm1, %%xmm0 \n"
+		"movups %%xmm0, %0 \n"
+		:"=g"(result)
+		:"g"(setA), "g"(setB)
+		:"rax"
     );
 
-    timeOfEnd = clock();
-    timePassed += (double)(timeOfEnd - timeOfStart);
-    }
-    return timePassed;
+    timeOfEnd_t = clock();
+    timePassed_t += (double)(timeOfEnd_t - timeOfStart_t);
+    
+    return timePassed_t;
 }
 double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
     numericVector result;
-    timePassed = 0;
+    timePassed_t = 0;
 
-    for(int i=0; i<numbers; ++i){
-    timeOfStart = clock();
+    timeOfStart_t = clock();
 
     asm(
         "movq %1, %%rax\n"
@@ -203,10 +208,10 @@ double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
         :"rax"
     );
 
-    timeOfEnd = clock();
-    timePassed += (double)(timeOfEnd - timeOfStart);
-    }
-    return timePassed;
+    timeOfEnd_t = clock();
+    timePassed_t += (double)(timeOfEnd_t - timeOfStart_t);
+    
+    return timePassed_t;
 }
 
 //SIMD operations - returning results
