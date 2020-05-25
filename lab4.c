@@ -35,7 +35,7 @@ double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers)
 double divisionSIMD(numericVector* setA ,numericVector* setB, int numbers);
 
 //SIMD operations - returning results
-numericVector additionSIMDResult(numericVector *setA ,numericVector* setB, int numbers);
+numericVector additionSIMDResult(numericVector *setA ,numericVector *setB, int numbers);
 numericVector subtractionSIMDResult(numericVector* setA ,numericVector* setB, int numbers);
 numericVector multiplicationSIMDResult(numericVector* setA ,numericVector* setB, int numbers);
 numericVector divisionSIMDResult(numericVector* setA ,numericVector* setB, int numbers);
@@ -66,6 +66,8 @@ int main(){
     generaetNumber(setB);
     printVector(setA);
     printVector(setB);
+    double x = additionSIMD(setA, setB, 4096);
+    printf("Czas trwania %lf\n",x);
     printf("OiAK - Laboratorium 4\n");
     printf("Prowadzacy: mgr. Tomasz Serafin\n");
 
@@ -93,7 +95,28 @@ void generaetNumber(numericVector *dataSet){
 }
 //SIMD operations - returning time passed
 double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
-    
+    numericVector result;
+    timePassed = 0;
+
+    for(int i=0; i<numbers; ++i){
+    timeOfStart = clock();
+
+    asm(
+        "movq %1, %%rax\n"
+        "movups (%%rax), %%xmm0\n"
+        "movq %2, %%rax\n"
+        "movups (%%rax), %%xmm1\n"
+        "addps %%xmm1, %%xmm0\n"
+        "movups %%xmm0, %0\n"
+        :"=g"(result)
+        :"g"(setA), "g"(setB)
+        :"rax"
+    );
+
+    timeOfEnd = clock();
+    timePassed += (double)(timeOfEnd - timeOfStart);
+    }
+    return timePassed;
 }
 double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
 
