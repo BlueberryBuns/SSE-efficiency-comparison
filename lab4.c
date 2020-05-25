@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
+#include<stdbool.h>
 
 /* ---Used Data---
 https://software.intel.com/content/www/us/en/develop/articles/introduction-to-intel-advanced-vector-extensions.html
@@ -10,8 +11,8 @@ https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 #define TAB_SIZE 8192
 #define REPETITION 100
 
-double time_passed;
-
+clock_t timeOfStart, timeOfEnd;
+double timePassed;
 
 // Initialising the struct of 128-bit vector
 typedef struct{
@@ -27,8 +28,37 @@ void generaetNumber(numericVector *dataSet);
 //printing the vector
 void printVector(numericVector *dataSet);
 
+//SIMD operations - returning time passed
+double additionSIMD(numericVector *setA ,numericVector* setB, int numbers);
+double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers);
+double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers);
+double divisionSIMD(numericVector* setA ,numericVector* setB, int numbers);
+
+//SIMD operations - returning results
+numericVector additionSIMDResult(numericVector *setA ,numericVector* setB, int numbers);
+numericVector subtractionSIMDResult(numericVector* setA ,numericVector* setB, int numbers);
+numericVector multiplicationSIMDResult(numericVector* setA ,numericVector* setB, int numbers);
+numericVector divisionSIMDResult(numericVector* setA ,numericVector* setB, int numbers);
+
+//SISD operations - returning time passed
+double additionSISD(float *a, float *b, int numbers);
+double subtractionSISD(float *a, float *b, int numbers);
+double multiplicationSISD(float *a, float *b, int numbers);
+double divisionSISD(float *a, float *b, int numbers);
+
+//SISD operations - returning results
+float additionSISDResult(float *a, float *b, int numbers);
+float subtractionSISDResult(float *a, float *b, int numbers);
+float multiplicationSISDResult(float *a, float *b, int numbers);
+float divisionSISDResult(float *a, float *b, int numbers);
+
 
 int main(){
+    double summaryAdditionTime;
+    double summarySubTime;
+    double summaryMultTime;
+    double summartDivTime;
+
     srand(time(NULL));
     numericVector setA[TAB_SIZE];
     numericVector setB[TAB_SIZE];
@@ -60,4 +90,59 @@ void generaetNumber(numericVector *dataSet){
         dataSet[i].vecThree, 
         dataSet[i].vecFour, i);
     }
+}
+//SIMD operations - returning time passed
+double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
+    
+}
+double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
+
+}
+double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers){
+
+}
+double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
+
+}
+
+//SIMD operations - returning results
+numericVector additionSIMDResult(numericVector *setA ,numericVector* setB, int numbers){
+
+}
+numericVector subtractionSIMDResult(numericVector* setA ,numericVector* setB, int numbers){
+
+}
+numericVector multiplicationSIMDResult(numericVector *setA ,numericVector* setB, int numbers){
+
+}
+numericVector divisionSIMDResult(numericVector* setA ,numericVector* setB, int numbers){
+
+}
+
+//SISD operations - returning time passed
+double additionSISD(float *a, float *b, int numbers){
+
+}
+double subtractionSISD(float *a, float *b, int numbers){
+
+}
+double multiplicationSISD(float *a, float *b, int numbers){
+
+}
+double divisionSISD(float *a, float *b, int numbers){
+
+}
+
+//SISD operations - returning results
+float additionSISDResult(float *a, float *b, int numbers){
+
+}
+float subtractionSISDResult(float *a, float *b, int numbers){
+
+}
+float multiplicationSISDResult(float *a, float *b, int numbers){
+
+}
+float divisionSISDResult(float *a, float *b, int numbers){
+
 }
