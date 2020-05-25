@@ -6,6 +6,7 @@
 /* ---Used Data---
 https://software.intel.com/content/www/us/en/develop/articles/introduction-to-intel-advanced-vector-extensions.html
 https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
+https://pl.wikibooks.org/wiki/C/Czytanie_i_pisanie_do_plik%C3%B3w
 
 */
 #define TAB_SIZE 8192
@@ -14,6 +15,7 @@ https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 
 clock_t timeOfStart_t, timeOfEnd_t;
 double timePassed_t;
+double timePassed = 0;
 
 // Initialising the struct of 128-bit vector
 typedef struct{
@@ -54,28 +56,47 @@ float multiplicationSISDResult(float *a, float *b, int numbers);
 float divisionSISDResult(float *a, float *b, int numbers);
 
 
-//SIMD test
-void testingSIMD(numericVector *setA, numericVector *setB,double times[], int numberOfNumbers);
-
 int main(){
     double times[TIMES_ARRAY_SIZE];
+    int numberAmount[] = {2048, 4096, 8192};
+    
 
     srand(time(NULL));
     //generating vectors
     numericVector setA[TAB_SIZE];
     numericVector setB[TAB_SIZE];
+
+    int numberOfNumbers[3] = {2048,4096,8192};
+
+    //testing loop - SIMD
+for(int j = 0; j < 3;++j){
+    for(int i = 0; i < REPETITION; ++i){
     generaetNumber(setA);
     generaetNumber(setB);
-    int numberOfNumbers = 0;
-    //testing loop
-    testingSIMD(setA, setB, times, numberOfNumbers);
-    //printVector(setA);
-    //printVector(setB);
-    //double x = additionSIMD(setA, setB, 4096);
+        for(int k = 0; k<numberOfNumbers[j]; ++k){
+            additionSIMD(&setA[k], &setB[k], 0);
+            times[0] += (double)additionSIMD(&setA[k], &setB[k], 0);
+            times[1] += (double)subtractionSIMD(&setA[k], &setB[k], 0);
+            times[2] += (double)multiplicationSIMD(&setA[k], &setB[k], 0);
+            times[3] += (double)divisionSIMD(&setA[k], &setB[k], 0);
+        }
+    
+    }
+    printf("------ %d -------\n", numberOfNumbers[j]);
     printf("Czas trwania dodawania %lf\n",times[0]);
     printf("Czas trwania odejmowania %lf\n",times[1]);
     printf("Czas trwania mnożenia %lf\n",times[2]);
     printf("Czas trwania dzielenia %lf\n",times[3]);
+    for(int k = 0; k<4; ++k){
+        times[k] = 0;
+    }
+}
+
+    
+    //printVector(setA);
+    //printVector(setB);
+    //double x = additionSIMD(setA, setB, 4096);
+  
     printf("OiAK - Laboratorium 4\n");
     printf("Prowadzacy: mgr. Tomasz Serafin\n");
 
@@ -83,25 +104,6 @@ int main(){
     return 0;
 }
 
-void testingSIMD(numericVector *setA, numericVector *setB,double times[], int numberOfNumbers){
-for(int i = 0; i<REPETITION; ++i){
-    double tmp = 0
-    generaetNumber(setA);
-    generaetNumber(setB);
-
-    for(int j = 0; j<numberOfNumbers;++j){
-        tmp = times[0] + (double)additionSIMD(&setA[j], &setB[j], numberOfNumbers);
-        &times[0] << tmp;
-        tmp = times[1] + (double)subtractionSIMD(&setA[j], &setB[j], numberOfNumbers);
-        &times[1] << tmp;
-        tmp = times[2] + (double)multiplicationSIMD(&setA[j], &setB[j], numberOfNumbers);
-        &times[2] << tmp;
-        tmp = times[3] + (double)divisionSIMD(&setA[j], &setB[j], numberOfNumbers);
-        &times[3] << tmp;
-    }
-}
-
-}
 void generaetNumber(numericVector *dataSet){
     for(int i = 0; i<TAB_SIZE; ++i){
     dataSet[i].vecOne = ((float)(rand()%100000));
@@ -123,7 +125,6 @@ void generaetNumber(numericVector *dataSet){
 //SIMD operations - returning time passed
 double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     numericVector result;
-    timePassed_t = 0;
 
     timeOfStart_t = clock();
 
@@ -140,13 +141,12 @@ double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     );
 
     timeOfEnd_t= clock();
-    timePassed_t += (double)(timeOfEnd_t- timeOfStart_t);
+    timePassed = (double)(timeOfEnd_t- timeOfStart_t);
 
-    return timePassed_t;
+    return timePassed;
 }
 double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     numericVector result;
-    timePassed_t = 0;
 
     timeOfStart_t = clock();
 
@@ -163,13 +163,12 @@ double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     );
 
     timeOfEnd_t= clock();
-    timePassed_t += (double)(timeOfEnd_t - timeOfStart_t);
+    timePassed = (double)(timeOfEnd_t - timeOfStart_t);
     
-    return timePassed_t;
+    return timePassed;
 }
 double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers){
     numericVector result;
-    timePassed_t = 0;
 
     timeOfStart_t = clock();
 
@@ -186,13 +185,12 @@ double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers)
     );
 
     timeOfEnd_t = clock();
-    timePassed_t += (double)(timeOfEnd_t - timeOfStart_t);
+    timePassed = (double)(timeOfEnd_t - timeOfStart_t);
     
-    return timePassed_t;
+    return timePassed;
 }
 double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
     numericVector result;
-    timePassed_t = 0;
 
     timeOfStart_t = clock();
 
@@ -209,9 +207,9 @@ double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
     );
 
     timeOfEnd_t = clock();
-    timePassed_t += (double)(timeOfEnd_t - timeOfStart_t);
+    timePassed= ((double)(timeOfEnd_t - timeOfStart_t));
     
-    return timePassed_t;
+    return timePassed;
 }
 
 //SIMD operations - returning results
