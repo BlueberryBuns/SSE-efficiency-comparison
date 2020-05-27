@@ -294,7 +294,7 @@ asm(
     "fld %1\n"
     "fadd %2 \n"
     :"=t"(result)
-    :"m"(a), "m"(b)
+    :"m"(*a), "m"(*b)
 
 );
 timeOfEnd_t = clock();
@@ -309,7 +309,7 @@ asm(
     "fld %1\n"
     "fsub %2 \n"
     :"=t"(result)
-    :"m"(a), "m"(b)
+    :"m"(*a), "m"(*b)
 
 );
 timeOfEnd_t = clock();
@@ -324,7 +324,7 @@ asm(
     "fld %1\n"
     "fmul %2 \n"
     :"=t"(result)
-    :"m"(a), "m"(b)
+    :"m"(*a), "m"(*b)
 
 );
 timeOfEnd_t = clock();
@@ -339,7 +339,7 @@ asm(
     "fld %1\n"
     "fdiv %2 \n"
     :"=t"(result)
-    :"m"(a), "m"(b)
+    :"m"(*a), "m"(*b)
 
 );
 timeOfEnd_t = clock();
