@@ -11,7 +11,7 @@ https://pl.wikibooks.org/wiki/C/Czytanie_i_pisanie_do_plik%C3%B3w
 */
 
 #define TAB_SIZE 2048
-#define REPETITION 10
+#define REPETITION 100
 #define TIMES_ARRAY_SIZE 4
 
 clock_t timeOfStart_t, timeOfEnd_t;
@@ -62,6 +62,9 @@ int main(){
     f = fopen("result.txt", "w");
 
     double times[TIMES_ARRAY_SIZE];
+    for(int i=0;i<TIMES_ARRAY_SIZE;++i){
+        times[i] =0;
+    }
     int numberAmount[] = {2048, 4096, 8192};
     
 
@@ -78,7 +81,7 @@ for(int j = 0; j < 3;++j){
     generaetNumber(setA);
     generaetNumber(setB);
         for(int k = 0; k<(numberOfNumbers[j]/4); ++k){
-            additionSIMD(&setA[k], &setB[k], 0);
+            //additionSIMD(&setA[k], &setB[k]);
             times[0] += (double)additionSIMD(&setA[k], &setB[k]);
             times[1] += (double)subtractionSIMD(&setA[k], &setB[k]);
             times[2] += (double)multiplicationSIMD(&setA[k], &setB[k]);
@@ -134,6 +137,7 @@ for(int j = 0; j < 3;++j){
             times[1] += (double)subtractionSISD(&setA[k].vecFour, &setB[k].vecFour);
             times[2] += (double)multiplicationSISD(&setA[k].vecFour, &setB[k].vecFour);
             times[3] += (double)divisionSISD(&setA[k].vecFour, &setB[k].vecFour);
+            divisionSISDResult(&setA[k].vecFour, &setB[k].vecFour);
         }
     }
 
@@ -183,7 +187,7 @@ void generaetNumber(numericVector *dataSet){
     }
 }
 //SIMD operations - returning time passed
-double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
+double additionSIMD(numericVector* setA ,numericVector* setB){
     numericVector result;
 
     timeOfStart_t = clock();
@@ -205,7 +209,7 @@ double additionSIMD(numericVector* setA ,numericVector* setB, int numbers){
 
     return timePassed;
 }
-double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
+double subtractionSIMD(numericVector* setA ,numericVector* setB){
     numericVector result;
 
     timeOfStart_t = clock();
@@ -227,7 +231,7 @@ double subtractionSIMD(numericVector* setA ,numericVector* setB, int numbers){
     
     return timePassed;
 }
-double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers){
+double multiplicationSIMD(numericVector* setA ,numericVector* setB){
     numericVector result;
 
     timeOfStart_t = clock();
@@ -249,7 +253,7 @@ double multiplicationSIMD(numericVector* setA ,numericVector* setB, int numbers)
     
     return timePassed;
 }
-double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
+double divisionSIMD(numericVector* setA ,numericVector *setB){
     numericVector result;
 
     timeOfStart_t = clock();
@@ -273,7 +277,7 @@ double divisionSIMD(numericVector* setA ,numericVector *setB, int numbers){
 }
 
 //SIMD operations - returning results
-numericVector additionSIMDResult(numericVector *setA ,numericVector* setB, int numbers){
+numericVector additionSIMDResult(numericVector *setA ,numericVector* setB){
     numericVector result;
 
     asm(
@@ -290,7 +294,7 @@ numericVector additionSIMDResult(numericVector *setA ,numericVector* setB, int n
 
 printf("%lf, %lf, %lf, %lf\n", result.vecOne, result.vecTwo, result.vecThree, result.vecFour);
 }
-numericVector subtractionSIMDResult(numericVector* setA ,numericVector* setB, int numbers){
+numericVector subtractionSIMDResult(numericVector* setA ,numericVector* setB){
     numericVector result;
 
     asm(
@@ -307,7 +311,7 @@ numericVector subtractionSIMDResult(numericVector* setA ,numericVector* setB, in
 
 printf("%lf, %lf, %lf, %lf\n", result.vecOne, result.vecTwo, result.vecThree, result.vecFour);
 }
-numericVector multiplicationSIMDResult(numericVector *setA ,numericVector* setB, int numbers){
+numericVector multiplicationSIMDResult(numericVector *setA ,numericVector* setB){
     numericVector result;
 
     asm(
@@ -324,7 +328,7 @@ numericVector multiplicationSIMDResult(numericVector *setA ,numericVector* setB,
 
 printf("%lf, %lf, %lf, %lf\n", result.vecOne, result.vecTwo, result.vecThree, result.vecFour);
 }
-numericVector divisionSIMDResult(numericVector* setA ,numericVector* setB, int numbers){
+numericVector divisionSIMDResult(numericVector* setA ,numericVector* setB){
     numericVector result;
     asm(
         "movq %1, %%rax\n"
@@ -342,7 +346,7 @@ numericVector divisionSIMDResult(numericVector* setA ,numericVector* setB, int n
 }
 
 //SISD operations - returning time passed
-double additionSISD(float *a, float *b, int numbers){
+double additionSISD(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -357,7 +361,7 @@ timeOfEnd_t = clock();
 timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
 return timePassed;
 }
-double subtractionSISD(float *a, float *b, int numbers){
+double subtractionSISD(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -372,7 +376,7 @@ timeOfEnd_t = clock();
 timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
 return timePassed;
 }
-double multiplicationSISD(float *a, float *b, int numbers){
+double multiplicationSISD(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -387,7 +391,7 @@ timeOfEnd_t = clock();
 timePassed= (double)(timeOfEnd_t - timeOfStart_t)/CLOCKS_PER_SEC;
 return timePassed;
 }
-double divisionSISD(float *a, float *b, int numbers){
+double divisionSISD(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -404,7 +408,7 @@ return timePassed;
 }
 
 //SISD operations - returning results
-float additionSISDResult(float *a, float *b, int numbers){
+float additionSISDResult(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -415,8 +419,9 @@ asm(
     :"m"(*a), "m"(*b)
 
 );
+printf("%lf ", result);
 }
-float subtractionSISDResult(float *a, float *b, int numbers){
+float subtractionSISDResult(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -427,8 +432,9 @@ asm(
     :"m"(*a), "m"(*b)
 
 );
+printf("%lf ", result);
 }
-float multiplicationSISDResult(float *a, float *b, int numbers){
+float multiplicationSISDResult(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -439,8 +445,9 @@ asm(
     :"m"(*a), "m"(*b)
 
 );
+printf("%lf ", result);
 }
-float divisionSISDResult(float *a, float *b, int numbers){
+float divisionSISDResult(float *a, float *b){
 float result;
 timeOfStart_t = clock();
 
@@ -451,4 +458,5 @@ asm(
     :"m"(*a), "m"(*b)
 
 );
+printf("%lf ", result);
 }
