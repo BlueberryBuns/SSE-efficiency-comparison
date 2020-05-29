@@ -3,15 +3,23 @@
 #include<time.h>
 #include<stdbool.h>
 
-/* ---Used Data---
+/* ---Used Sources---
 https://software.intel.com/content/www/us/en/develop/articles/introduction-to-intel-advanced-vector-extensions.html
 https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 https://pl.wikibooks.org/wiki/C/Czytanie_i_pisanie_do_plik%C3%B3w
-
+https://docs.oracle.com/cd/E18752_01/html/817-5477/eoizy.html
+http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
+https://cs61.seas.harvard.edu/site/2018/Asm1/
+https://c9x.me/x86/html/file_module_x86_id_201.html
+https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
+https://en.wikibooks.org/wiki/X86_Assembly/SSE
+https://books.google.pl/books?id=c3SlgrqMid4C&pg=PA218&lpg=PA218&dq=m+fpu+assembly&source=bl&ots=wXJlc4XVUi&sig=ACfU3U2RKxbGxLj7i2bMX4NKJxOwAft4JA&hl=pl&sa=X&ved=2ahUKEwiA44L75NjpAhVMi6QKHdE9BqUQ6AEwAXoECAsQAQ#v=onepage&q=m%20fpu%20assembly&f=false
+Intel Docummentation
+http://zak.ict.pwr.wroc.pl/materials/
 */
 
 #define TAB_SIZE 2048
-#define REPETITION 100
+#define REPETITION 10
 #define TIMES_ARRAY_SIZE 4
 
 clock_t timeOfStart_t, timeOfEnd_t;
@@ -111,33 +119,33 @@ for(int j = 0; j < 3;++j){
     generaetNumber(setA);
     generaetNumber(setB);
         for(int k = 0; k<(numberOfNumbers[j]/4); ++k){
-            additionSISD(&setA[k].vecOne, &setB[k].vecOne);
+            //additionSISD(&setA[k].vecOne, &setB[k].vecOne);
             times[0] += (double)additionSISD(&setA[k].vecOne, &setB[k].vecOne);
             times[1] += (double)subtractionSISD(&setA[k].vecOne, &setB[k].vecOne);
             times[2] += (double)multiplicationSISD(&setA[k].vecOne, &setB[k].vecOne);
             times[3] += (double)divisionSISD(&setA[k].vecOne, &setB[k].vecOne);
         }
         for(int k = 0; k<(numberOfNumbers[j]/4); ++k){
-            additionSISD(&setA[k].vecTwo, &setB[k].vecTwo);
+            //additionSISD(&setA[k].vecTwo, &setB[k].vecTwo);
             times[0] += (double)additionSISD(&setA[k].vecTwo, &setB[k].vecTwo);
             times[1] += (double)subtractionSISD(&setA[k].vecTwo, &setB[k].vecTwo);
             times[2] += (double)multiplicationSISD(&setA[k].vecTwo, &setB[k].vecTwo);
             times[3] += (double)divisionSISD(&setA[k].vecTwo, &setB[k].vecTwo);
         }
         for(int k = 0; k<(numberOfNumbers[j]/4); ++k){
-            additionSISD(&setA[k].vecThree, &setB[k].vecThree);
+            //additionSISD(&setA[k].vecThree, &setB[k].vecThree);
             times[0] += (double)additionSISD(&setA[k].vecThree, &setB[k].vecThree);
             times[1] += (double)subtractionSISD(&setA[k].vecThree, &setB[k].vecThree);
             times[2] += (double)multiplicationSISD(&setA[k].vecThree, &setB[k].vecThree);
             times[3] += (double)divisionSISD(&setA[k].vecThree, &setB[k].vecThree);
         }
         for(int k = 0; k<(numberOfNumbers[j]/4); ++k){
-            additionSISD(&setA[k].vecFour, &setB[k].vecFour);
+            //additionSISD(&setA[k].vecFour, &setB[k].vecFour);
             times[0] += (double)additionSISD(&setA[k].vecFour, &setB[k].vecFour);
             times[1] += (double)subtractionSISD(&setA[k].vecFour, &setB[k].vecFour);
             times[2] += (double)multiplicationSISD(&setA[k].vecFour, &setB[k].vecFour);
             times[3] += (double)divisionSISD(&setA[k].vecFour, &setB[k].vecFour);
-            divisionSISDResult(&setA[k].vecFour, &setB[k].vecFour);
+            //divisionSISDResult(&setA[k].vecFour, &setB[k].vecFour);
         }
     }
 
@@ -146,8 +154,7 @@ for(int j = 0; j < 3;++j){
     fprintf(f,"- %lf\n",times[1]/10.0f);
     fprintf(f,"* %lf\n",times[2]/10.0f);
     fprintf(f,"/ %lf\n\n\n",times[3]/10.0f);
-    printf("XD");
-    // printf("------ %d -------\n", numberOfNumbers[j]);
+    // printf("%d\n", numberOfNumbers[j]);
     // printf("Czas trwania dodawania %lf\n",times[0]);
     // printf("Czas trwania odejmowania %lf\n",times[1]);
     // printf("Czas trwania mnożenia %lf\n",times[2]);
@@ -162,7 +169,7 @@ for(int j = 0; j < 3;++j){
     //double x = additionSIMD(setA, setB, 4096);
   
     printf("OiAK - Laboratorium 4\n");
-    printf("Prowadzacy: mgr. Tomasz Serafin\n");
+    printf("Prowadzacy: mgr inż. Tomasz Serafin\n");
 
 
     return 0;
