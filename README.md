@@ -1,4 +1,3 @@
-# SSE
 ## SISD - SIMD
 
 These are result of comparison between ***SISD*** and ***SIMD***. 
